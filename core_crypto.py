@@ -46,6 +46,8 @@ def cbc_encrypt(plain,iv,key):
 	aes_obj = AES.new(bytes(key))
 	BLOCKSIZE = AES.block_size
 	
+	plain = pkcs7_pad(plain,BLOCKSIZE)
+	
 	numcipherblocks = len(plain)/(BLOCKSIZE) + (1 if len(plain)%BLOCKSIZE else 0)
 	
 	cipher = ""
@@ -79,12 +81,17 @@ def cbc_decrypt(cipher,iv,key):
 		for j in range(BLOCKSIZE):
 			plain += chr(ord(m_xor_c[j:j+1]) ^ ord(c_imin1[j:j+1]))
 		c_imin1 = cipher[i*BLOCKSIZE:i*BLOCKSIZE + BLOCKSIZE]
+		
+	plain = pkcs7_strip(plain,BLOCKSIZE)
+		
 	return plain
 	
 	
 def ecb_encrypt(plain,key):
 	aes_obj = AES.new(bytes(key))
 	BLOCKSIZE = AES.block_size
+	
+	plain = pkcs7_pad(plain,BLOCKSIZE)
 
 	numcipherblocks = len(plain)/(BLOCKSIZE) + (1 if len(plain)%BLOCKSIZE else 0)
 
@@ -107,6 +114,8 @@ def ecb_decrypt(cipher,key):
     	m_i = cipher[i*BLOCKSIZE: i*BLOCKSIZE + BLOCKSIZE]
     	#E_k(M_i),
     	plain += aes_obj.decrypt(m_i)
+    	
+    plain = pkcs7_strip(plain,BLOCKSIZE)
 
     return plain
 
