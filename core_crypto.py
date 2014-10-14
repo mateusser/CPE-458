@@ -82,7 +82,7 @@ def cbc_decrypt(cipher,iv,key):
 			plain += chr(ord(m_xor_c[j:j+1]) ^ ord(c_imin1[j:j+1]))
 		c_imin1 = cipher[i*BLOCKSIZE:i*BLOCKSIZE + BLOCKSIZE]
 
-	plain = pkcs7_strip(plain,blocksize)
+	plain = pkcs7_strip(plain,BLOCKSIZE)
 
 	return plain
 	
@@ -115,7 +115,7 @@ def ecb_decrypt(cipher,key):
     	#E_k(M_i),
     	plain += aes_obj.decrypt(m_i)
 
-    plain = pkcs7_strip(plain,blocksize)
+    plain = pkcs7_strip(plain,BLOCKSIZE)
 
     return plain
 
