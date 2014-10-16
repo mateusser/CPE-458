@@ -1,7 +1,6 @@
 from Crypto.Cipher import AES
 
 def otp_encrypt(pt,key):
-
     ct = ""
     if(len(pt) > len(key)):
         raise Exception("KeyLengthError")
@@ -11,12 +10,13 @@ def otp_encrypt(pt,key):
         ct += chr(ord(pt[i:i+1]) ^ ord(key[i:i+1]))
     return ct
 
-def pkcs7_pad(plain,blocksize):
 
+def pkcs7_pad(plain,blocksize):
     padbyte = blocksize - len(plain)%blocksize
     for i in range(padbyte):
         plain += chr(padbyte)
     return plain
+
 
 def pkcs7_strip(plain,blocksize):
     numblocks = len(plain)/(blocksize) + (1 if len(plain)%blocksize else 0)
@@ -35,22 +35,10 @@ def pkcs7_strip(plain,blocksize):
 
     return newplain
 
-def ansix923_pad(plain, blocksize):
-    padbyte = blocksize - len(plain)%blocksize
-
-    if padbyte == 0:
-        return plain
-
-    for i in range(padbyte - 1):
-        plain += chr(0)
-    plain += chr(padbyte)
-    return plain
-
 
 #C_i = E_k(M_i xor C_(i-1)), C_0 = IV
 #plain, iv, and key all expected to be of size BLOCKSIZE
 def cbc_encrypt(plain,iv,key):
-
     aes_obj = AES.new(bytes(key))
     BLOCKSIZE = AES.block_size
 
@@ -70,6 +58,7 @@ def cbc_encrypt(plain,iv,key):
         c_imin1 = aes_obj.encrypt(m_xor_c)
         cipher += c_imin1
     return cipher
+
 
 #M_i = D_k(C_i) xor C_(i-1)
 def cbc_decrypt(cipher,iv,key):
@@ -125,4 +114,3 @@ def ecb_decrypt(cipher,key):
     plain = pkcs7_strip(plain,BLOCKSIZE)
 
     return plain
-
