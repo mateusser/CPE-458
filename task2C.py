@@ -10,68 +10,112 @@ REGISTER_URL = 'http://localhost:8080/register'
 HOME_URL = 'http://localhost:8080/home'
 LOGOUT_URL = 'http://localhost:8080/logout'
 
+MY_USERNAME = 'matheusssss' + 'admin' + chr(0)*11 + chr(12)
 MY_USERNAME = 'matheus'
-MY_USERNAME = 'aaaaaaaaaaaadmin00000000000nnnn'
 MY_PASSWORD = '123456'
-MY_ROLE = 'admin'
+MY_ROLE = 'user'
+TARGET_ROLE = 'admin'
+TARGET_COOKIE = 'auth_token'
 
-print 'Registring a new user...'
-
-register_form = {
-    'user': MY_USERNAME,
-    'password': MY_PASSWORD,
-}
-
-register_page_html = urllib2.urlopen(REGISTER_URL, urllib.urlencode(register_form))
-html = register_page_html.read()
-
-if 'User registered' in html:
-    print '{} registered...'.format(MY_USERNAME)
-elif 'User already registered' in html:
-    print '{} already registered...'.format(MY_USERNAME)
-else:
-    print 'Invalid page...'
-
-print 'Access Account...'
-
-access_form = {
-    'user': MY_USERNAME,
-    'password': MY_PASSWORD,
-}
-
+cookie_pattern = 'user={}&uid=2&role={}'
 session = requests.Session()
-session.post(SITE_URL, data = access_form)
 
-target_cookie = 'auth_token'
-cookie_pattern = 'user={}&uid={}&role={}'.format(MY_USERNAME, 2, MY_ROLE)
 
-print '{} cookie on {} home page:'.format(target_cookie, MY_USERNAME)
-original_cookie = session.cookies[target_cookie]
-print original_cookie
+def register(username, password):
+    register_form = {
+        'user': username,
+        'password': password,
+    }
 
-original_cookie_decoded = hex_to_ascii(original_cookie)
+    register_page_html = urllib2.urlopen(REGISTER_URL, urllib.urlencode(register_form))
+    html = register_page_html.read()
 
-print 'Changing the role to admin...'
-role_start = len(cookie_pattern) - len(MY_ROLE)
-role_end = len(cookie_pattern)
+    if 'User registered' in html:
+        print '{} registered...'.format(username)
+    elif 'User already registered' in html:
+        print '{} already registered...'.format(username)
+    else:
+        print 'Invalid page...'
 
-for i in range(len(cookie_pattern)/AES.block_size + 1):
-    print cookie_pattern[i*AES.block_size:(i*AES.block_size)+AES.block_size]
-for i in range(len(original_cookie_decoded)/AES.block_size + 1):
-    print original_cookie_decoded[i*AES.block_size:(i*AES.block_size)+AES.block_size]
+def getAuthCookie(username, password):
+    access_form = {
+        'user': username,
+        'password': password,
+    }
 
-#print cookie_pattern[role_start: role_end]
-role = original_cookie_decoded[role_start: role_end]
-role = ascii_to_hex(original_cookie_decoded[37:37 + len('admin')])
+    session.post(SITE_URL, data = access_form)
 
-admin_role_cookie = ascii_to_hex(
-    original_cookie_decoded[:role_start] +
-    role +
-    original_cookie_decoded[role_end:]
-)
+    original_cookie = session.cookies[TARGET_COOKIE]
 
-session.get(LOGOUT_URL)
-my_cookies = {target_cookie: admin_role_cookie}
-response = session.get(SITE_URL, cookies = my_cookies)
-if 'Already logged in' in response.text:
+    session.get(LOGOUT_URL)
+
+    return original_cookie
+
+def printMessageInBlocks(message, block_size):
+    for i in range(len(message)/block_size + 1):
+        print '[',
+        print message[i*block_size:(i*block_size)+block_size],
+        print ']'
+
+
+
+# Creating the first username, has to be the size of two blocks
+# First Block:  user=matheusssss
+# Second Block: admin00000000000 -> ANSI x.923 pad
+admin_block = TARGET_ROLE + (chr(0)*(AES.block_size - len(TARGET_ROLE) - 1)) + chr(AES.block_size - len(TARGET_ROLE))
+username1 = MY_USERNAME + MY_USERNAME[-1]*(AES.block_size - len('user=' + MY_USERNAME)) + admin_block
+
+print 'Registring user1...'
+
+register(username1, MY_PASSWORD)
+
+print 'User1 cookie message:'
+printMessageInBlocks(cookie_pattern.format(username1, MY_ROLE), AES.block_size)
+
+print '\nUser1 cookie:'
+original_cookie = getAuthCookie(username1, MY_PASSWORD)
+
+printMessageInBlocks(original_cookie, AES.block_size*2)
+
+print '\nGet admin0000... information block'
+admin_block_cookie = original_cookie[AES.block_size*2:AES.block_size*4]
+print admin_block_cookie
+
+print
+# Creating the second username, has to left the last line of
+# the message, just with the role
+# First Block:  user=matheusssss
+# Second Block: ssss&uid=2&role=
+# Third Block:  user
+username2 = MY_USERNAME + MY_USERNAME[-1]*(AES.block_size - len('user=' + MY_USERNAME) + len(MY_ROLE))
+
+print 'Registring user2...'
+
+register(username2, MY_PASSWORD)
+print 'User2 cookie message:'
+printMessageInBlocks(cookie_pattern.format(username2, MY_ROLE), AES.block_size)
+
+print '\nUser2 cookie:'
+original_user2_cookie = getAuthCookie(username2, MY_PASSWORD)
+
+printMessageInBlocks(original_user2_cookie, AES.block_size*2)
+
+print
+print
+print 'Generate the new cookie with admin block...'
+admin_cookie_auth = original_user2_cookie[:AES.block_size*4] + admin_block_cookie
+printMessageInBlocks(admin_cookie_auth, AES.block_size*2)
+
+print 'Generated cookie...'
+print admin_cookie_auth
+print
+print 'Loggin with the cookie...'
+my_cookies = {TARGET_COOKIE: admin_cookie_auth}
+response = session.get(HOME_URL, cookies = my_cookies)
+print
+print
+print response.text
+print
+print
+if 'Welcome, Admin!' in response.text:
     print 'SUCCESS!'
