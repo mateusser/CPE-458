@@ -38,7 +38,7 @@ def pkcs7_strip(plain,blocksize):
 
 #C_i = E_k(M_i xor C_(i-1)), C_0 = IV
 #plain, iv, and key all expected to be of size BLOCKSIZE
-def cbc_encrypt(plain,iv,key):
+def cbc_encrypt(plain, iv, key):
     aes_obj = AES.new(bytes(key))
     BLOCKSIZE = AES.block_size
 
@@ -57,13 +57,18 @@ def cbc_encrypt(plain,iv,key):
         #E_k(M_i xor C_(i-1)),
         c_imin1 = aes_obj.encrypt(m_xor_c)
         cipher += c_imin1
+    cipher = iv + cipher
     return cipher
 
 
 #M_i = D_k(C_i) xor C_(i-1)
-def cbc_decrypt(cipher,iv,key):
+def cbc_decrypt(cipher, key):
     aes_obj = AES.new(bytes(key))
     BLOCKSIZE = AES.block_size
+
+    iv = cipher[:BLOCKSIZE]
+
+    cipher = cipher[BLOCKSIZE:]
 
     numplainblocks = len(cipher)/BLOCKSIZE
 

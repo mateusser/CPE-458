@@ -8,4 +8,4 @@ with open('Lab2.TaskIII.A.txt', 'r') as cipherFile:
 key = 'MIND ON MY MONEY'
 iv = 'MONEY ON MY MIND'
 
-print core_crypto.cbc_decrypt(cipher, iv, key)
+print core_crypto.cbc_decrypt(cipher, key)
