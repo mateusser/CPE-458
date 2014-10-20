@@ -1,3 +1,7 @@
+#Authors:
+#   Matheus de Sousa Faria    (desousaf at calpoly.edu)
+#   Mateus Seehagen Rodrigues (mrodr107 at calpoly.edu)
+
 from core_crypto import *
 from conversions import *
 
