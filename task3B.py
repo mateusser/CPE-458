@@ -68,15 +68,17 @@ username = 'mathsssssss'
 print 'Registring user1...'
 register(username, MY_PASSWORD)
 print
+print '{} guessed session cookie:'.format(username)
 printMessageInBlocks(cookie_pattern.format(username, 1, MY_ROLE), 16)
 
 username2 = 'mathssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss'
 print '\nRegistring user2...'
 register(username2, MY_PASSWORD)
 print
+print '{} guessed session cookie:'.format(username2)
 printMessageInBlocks(cookie_pattern.format(username2, 2, MY_ROLE), 16)
 
-print '\nUser2 cookie:'
+print '\nUser2 real encoded session cookie:'
 original_cookie = getAuthCookie(username2, MY_PASSWORD)
 
 printMessageInBlocks(original_cookie, AES.block_size*2)
@@ -94,9 +96,6 @@ blocks[4] = flip_block(blocks[4], 'sssssss&uid=1&ro', '&role=admin&zzzz')
 flipped_cookie = ''.join(blocks)
 flipped_cookie_encoded = ascii_to_hex(flipped_cookie)
 
-print 'Cookie generated:'
-printMessageInBlocks(flipped_cookie_encoded, 32)
-
 print '\nHow the cookie should look like'
 print '''
 [  iv-trash---line ]
@@ -105,7 +104,13 @@ print '''
 [ &uid=1&xxxxxxxxx ]
 [   trash---line   ]
 [ &role=admin&xxxx ]
-[ e=user ]'''
+[ e=user ]
+'''
+
+print 'Cookie generated:'
+printMessageInBlocks(flipped_cookie_encoded, 32)
+print
+print flipped_cookie_encoded
 
 my_cookies = {TARGET_COOKIE: flipped_cookie_encoded}
 response = session.get(HOME_URL, cookies = my_cookies)
