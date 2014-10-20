@@ -21,5 +21,7 @@ for i in range(len(ciphersHEX)):
 
     if isECB(cipher):
         with open("./images/image"+str(i)+".bmp", "w") as fp:
+            print 'Correct image: number ' + str(i)
+            print 'File in ./images/image' + str(i) + '.bmp'
             fp.write(cipher)
 
