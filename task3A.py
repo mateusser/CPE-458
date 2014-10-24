@@ -5,9 +5,7 @@
 #   Matheus de Sousa Faria    (desousaf at calpoly.edu)
 #   Mateus Seehagen Rodrigues (mrodr107 at calpoly.edu)
 
-import re
 import requests
-import urllib2
 
 from core_crypto import *
 
