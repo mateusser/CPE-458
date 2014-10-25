@@ -152,7 +152,7 @@ for size in range(512):
     fake_key = 'a'*size
     what_padded_key = sha1_padding(fake_key + post['what'])
 
-    newHash = '%x' % sha1_get_next_int_hash(int(post['mac'], 16), what_padded_key, newMessage)
+    newHash = '%040x' % sha1_get_next_int_hash(int(post['mac'], 16), what_padded_key, newMessage)
 
     what_padded = what_padded_key[size:]
     if sendMessageAndMac(post['who'], what_padded + newMessage, newHash):

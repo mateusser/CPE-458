@@ -227,7 +227,5 @@ def sha1_int(message):
     return hh
 
 def sha1_hex(message):
-    digest = '%x' % (sha1_int(message))
-    if len(digest) % 2 != 0:
-        return '0' + digest
+    digest = '%040x' % (sha1_int(message))
     return digest
