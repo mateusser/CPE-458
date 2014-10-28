@@ -7,7 +7,15 @@ total = 10000000
 for i in xrange(1,total):
     hashd = sha1_int(str(i))
 
+<<<<<<< HEAD
     relev = least_50bits = bin(hashd)[-50:]
+=======
+    relev = least_50bits = bin(hashd)[-26:]
+
+    #relev = hashd[(len(hashd)-7):]      # 7 bytes, 56 bits
+    #mask  = "03ffffffffffff"            # mask to ignore 6 most significant bits
+    #relev = xor_strings(relev, hex_to_ascii(mask))
+>>>>>>> FETCH_HEAD
 
     if relev in hashDict:
         print " *** Collision found ", hashDict[relev], " and ", i
