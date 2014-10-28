@@ -2,9 +2,9 @@ from conversions import *
 from core_crypto import *
 
 hashDict = {}
-total = 10000000
+total = 100000000
 
-for i in xrange(1,total):
+for i in xrange(1, total):
     hashd = sha1_int(str(i))
 
     relev = least_50bits = bin(hashd)[-50:]
