@@ -29,7 +29,6 @@ def hmac_sha1(key, message):
 	i_key_pad = xor_strings(chr(54) * blocksize, key)
 
 	hash1 = hex_to_ascii(hashlib.sha1(i_key_pad+message).hexdigest())
-	#print "\n\nopad: "+ascii_to_hex(o_key_pad)
 	hash2hex = hashlib.sha1(o_key_pad+hash1).hexdigest()
 
 	return hash2hex
@@ -38,7 +37,7 @@ key = "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232
 message = "Sample #1"
 
 print "key: "+key
-print "\n\nmessage: "+message
+print "\nmessage: "+message
 																		   
-hmac_sha1(hex_to_ascii(key), "Sample #1")
+print "\nhmac: "+hmac_sha1(hex_to_ascii(key), "Sample #1")
 
