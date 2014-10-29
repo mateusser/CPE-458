@@ -48,8 +48,11 @@ print
 ct_decoded = hex_to_ascii(ciphertext)
 ct_blocks = get_message_in_blocks(ct_decoded, block_size)
 
+print 'Retriving all internal states...'
+
 plaintext = ''
 for index_block in range(len(ct_blocks) - 1):
+    print 'Getting internal state #{}'.format(index_block)
     internal_state = ''
     for internal_index in range(1, block_size + 1):
         for i in range(256):
@@ -63,13 +66,25 @@ for index_block in range(len(ct_blocks) - 1):
                 internal_state = chr(i ^ internal_index) + internal_state
                 break
     ct_blocks = get_message_in_blocks(ct_decoded, block_size)
+
+    print 'Internal State #{}: {}'.format(index_block, internal_state.encode('hex'))
+
     plaintext = xor_strings(internal_state, ct_blocks[len(ct_blocks) - (index_block + 2)]) + plaintext
 
+    print
+    print 'Plaintext discovered until now:'
+    print plaintext
+    print
+
+print
+print 'Removing the padding from the plaintext discovered...'
 plaintext = plaintext[:-1*ord(plaintext[-1])]
 
 print plaintext
 print
 print 'Checking text found...'
+print
+print
 if check_guess(plaintext):
     print 'SUCCESS! \o/'
 else:

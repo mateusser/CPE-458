@@ -135,13 +135,13 @@ print
 
 what_padded = sha1_padding(post['what'])
 
-print 'Padding the what field...'
+print 'Padding the "what" field...'
 print what_padded
 print
 
 newMessage = '. New Message...'
 
-print 'New Message Appending...'
+print 'Appending New Message...'
 print what_padded + newMessage
 print
 
@@ -157,6 +157,7 @@ for size in range(512):
     what_padded = what_padded_key[size:]
     if sendMessageAndMac(post['who'], what_padded + newMessage, newHash):
         print
+        print 'Guessed Key Size: {}'.format(size)
+        print 'Query that was sent to the site...'
         print query_pattern.format(post['who'], what_padded + newMessage, newHash)
-        print 'Key Size: {}'.format(size)
         break

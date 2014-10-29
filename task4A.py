@@ -37,55 +37,28 @@ max_time = 0
 get_out_now = False
 
 for i in range(0, 40, 2):
-    print '\n\n'
-    print '='*80
-    print i
-
-    prev_time = sendMessageAndMac(message, best_mac)
+    prev_time = max_time
     guessed_mac = best_mac
-    total_time = 0
     max_time = 0
 
-    hex_dict = {}
-    for k in range(30):
-        max_time = 0
-        for j in range(2**8):
-            hex_number = '%02x' % (j)
-            guessed_mac = guessed_mac[:i] + hex_number + guessed_mac[i + 2:]
-            time_mesure = sendMessageAndMac(message, guessed_mac)
+    for j in range(2**8):
+        hex_number = '%02x' % (j)
+        guessed_mac = guessed_mac[:i] + hex_number + guessed_mac[i + 2:]
+        time_mesure = sendMessageAndMac(message, guessed_mac)
 
-            if time_mesure == -1:
-                get_out_now = True
-                break
-
-            if time_mesure > max_time:
-                max_time = time_mesure
-                best_mac = guessed_mac
-                choosen_hex = hex_number
-
-        if choosen_hex in hex_dict:
-            hex_dict[choosen_hex] += 1
-        else:
-            hex_dict[choosen_hex] = 1
-
-        print best_mac, max_time
-
-        if get_out_now:
+        if time_mesure == -1:
+            get_out_now = True
             break
 
-    print
-    print hex_dict
-    print
-    maxn = 0
-    for hex_number in hex_dict:
-        if hex_dict[hex_number] > maxn:
+        if time_mesure > max_time:
+            max_time = time_mesure
+            best_mac = guessed_mac
             choosen_hex = hex_number
-            maxn = hex_dict[hex_number]
-    best_mac = guessed_mac[:i] + choosen_hex + guessed_mac[i + 2:]
 
-    print '\n\nFinal:'
-    print max_time
-    print best_mac
+    print i
+    print best_mac, max_time
+    print
+
 print
 print 'Final MAC: '
 print best_mac
