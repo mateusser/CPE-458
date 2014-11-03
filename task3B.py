@@ -1,20 +1,13 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+#Authors:
+#   Matheus de Sousa Faria    (desousaf at calpoly.edu)
+#   Mateus Seehagen Rodrigues (mrodr107 at calpoly.edu)
+
 import hashlib
 from conversions import *
 from core_crypto import *
-
-#function hmac (key, message)
-#    if (length(key) > blocksize) then
-#        key = hash(key) // keys longer than blocksize are shortened
-#    end if
-#    if (length(key) < blocksize) then
-#        key = key | [0x00 * (blocksize - length(key))] // keys shorter than blocksize are zero-padded (where | is concatenation)
-#    end if
-#   
-#    o_key_pad = [0x5c * blocksize] XOR key // Where blocksize is that of the underlying hash function
-#    i_key_pad = [0x36 * blocksize] XOR key 
-#   
-#    return hash(o_key_pad | hash(i_key_pad | message)) // Where | is concatenation
-#end function
 
 def hmac_sha1(key, message):
 	blocksize = 64	# 64 bytes for SHA-1 * 2 for hex

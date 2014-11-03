@@ -1,6 +1,9 @@
+#Authors:
+#   Matheus de Sousa Faria    (desousaf at calpoly.edu)
+#   Mateus Seehagen Rodrigues (mrodr107 at calpoly.edu)
+
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 
 def sha1(message):
     mask32 = 0xffffffff

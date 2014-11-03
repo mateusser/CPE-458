@@ -53,7 +53,7 @@ def mac_guesser(message, start_point, start_mac):
     get_out_now = False
     most_possible_mac = ''
     safe_index = 0
-    multiple_macs = 10
+    multiple_macs = 20
 
     all_macs = {}
     for i in range(multiple_macs):
@@ -156,3 +156,4 @@ while True:
     most_possible_mac, safe_index, get_out_now = mac_guesser(message, safe_index, most_possible_mac)
     if get_out_now:
         break
+

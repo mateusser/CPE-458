@@ -1,3 +1,10 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+#Authors:
+#   Matheus de Sousa Faria    (desousaf at calpoly.edu)
+#   Mateus Seehagen Rodrigues (mrodr107 at calpoly.edu)
+
 from conversions import *
 from core_crypto import *
 
